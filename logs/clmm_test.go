@@ -40,6 +40,23 @@ func TestGetRaydiumCLMMLogsFromBase64Log(t *testing.T) {
 			},
 			wantErr: false,
 		},
+		{
+			name: "PoolCreatedEvent",
+			args: args{
+				logData: "Program data: GV5LL3BjNT8Gm4hX/quBhPtof2NGGMA12sQ53BrrO1WYoPAAAAAAATxAC5Lho3BivvSqHd1opmKh+SHf03DO77chQFijFPN/eAB+wn62iylTTb7dKCrlYq7tKXMZwEACmNAc8FafeQaCkoQFj5DvFLESOQAAAAAAAAD6OwEAqQWJ6MMnGbxO3RtiO7H2m0/3VtsdjctcDkxxeDwJMkI1oW4983FaaYJCvWFpZqSDRDsJ2Qd4t+bz/5+g/cGqmw==",
+			},
+			want: &types.ClmmPoolCreatedEvent{
+				TokenMint0:   solana.MustPublicKeyFromBase58("So11111111111111111111111111111111111111112"),
+				TokenMint1:   solana.MustPublicKeyFromBase58("54C726ZerpSMYkmks6gGKFxsnbpziNkR13TqDdnzpump"),
+				TickSpacing:  120,
+				PoolState:    solana.MustPublicKeyFromBase58("9XpPAv79tumf7VDxqPGBjrz7DueZXqj2PuCpzHLxMCTs"),
+				SqrtPriceX64: 1346880782715520388,
+				Tick:         57,
+				TokenVault0:  solana.MustPublicKeyFromBase58("11113aGsyuSXvG9adwywdr5mWVSdqAsTTQ6BvJQeToq"),
+				TokenVault1:  solana.MustPublicKeyFromBase58("xpKFB83Ay9egnd9Uy1Uf4LixEjCLtPQWdzmKdottBRf"),
+			},
+			wantErr: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -49,7 +66,7 @@ func TestGetRaydiumCLMMLogsFromBase64Log(t *testing.T) {
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetRaydiumCLMMLogsFromBase64Log() = %v, want %v", got, tt.want)
+				t.Errorf("GetRaydiumCLMMLogsFromBase64Log() = %v, want %+v", got, tt.want)
 			}
 		})
 	}
