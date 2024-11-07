@@ -1,6 +1,7 @@
 package logs
 
 import (
+	"fmt"
 	"regexp"
 	"strconv"
 )
@@ -48,6 +49,10 @@ func ParseProgramLogs(logs []string) []SolanaProgramLog {
 			tmpProgramStack = append(tmpProgramStack, tmpProgram)
 			stack = stack + 1
 		} else if successPattern.MatchString(line) {
+			if len(tmpProgramStack) == 0 {
+				fmt.Printf("Error: unmatched successPattern")
+				continue
+			}
 			tmpProgram := tmpProgramStack[len(tmpProgramStack)-1]
 			tmpProgram.Address = successPattern.FindStringSubmatch(line)[1]
 			tmpProgram.Status = successPattern.FindStringSubmatch(line)[2]

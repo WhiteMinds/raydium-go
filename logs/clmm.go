@@ -88,7 +88,5 @@ func GetRaydiumCLMMLogsFromBase64Log(logData string) (interface{}, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to decode borsh data: %w", err)
 	}
-	fmt.Printf("result: %+v\n", result)
-
 	return result, nil
 }

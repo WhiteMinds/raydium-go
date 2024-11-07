@@ -35,11 +35,23 @@ import (
 ```
 
 ### Parse Instruction Data
-TBD
+```go
+import (
+    "github.com/Umiiii/raydium-go/instructions"
+)
+...
+instructions.DecodeRaydiumCreatePoolData(outerInst.Data)
+...
+```
 ### Parse Parameters
 
 ```go
-
+import (
+    "github.com/Umiiii/raydium-go/parameters"
+)
+...
+parameters.DecodeRaydiumCreatePoolParams(outerInst.Data)
+...
 ```
 
 ### Mapping Account Address
@@ -54,3 +66,49 @@ acc := accounts.ParseAccountsIntoStruct[types.ClmmCreatePoolAccounts](outerInst.
 ....
 
 ```
+
+
+### Get Raydium Swap Details
+#### CLMM
+
+Actually you can infer the swap details from the log message ONLY, but it is quite tricky.
+
+So a log function is provided to group the log message first.
+```go
+import (
+    "github.com/Umiiii/raydium-go/logs"
+)
+
+func main() {
+    logs := logs.ParseProgramLogs(parsedTransaction.Meta.LogMessages)
+ 
+    for idx, singleLog := range allLogs {
+		if singleLog.Address == CLMMAddress {
+           	var swapRawData *types.ClmmSwapEvent
+			var ok bool
+			if swapRawData, ok = (logsData).(*types.ClmmSwapEvent); !ok {
+				return swapEvent, errors.New("failed to parse clmm logs")
+			}
+            poolAddress := swapRawData.PoolAddress
+            tokenMint0 := swapRawData.TokenMint0
+            tokenMint1 := swapRawData.TokenMint1
+            amount0 := swapRawData.Amount0
+            amount1 := swapRawData.Amount1
+            if swapRawData.ZeroForOne {
+                // swap from token0 to token1
+            } else {
+                // swap from token1 to token0
+            }
+        }
+    }
+}
+```
+
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
