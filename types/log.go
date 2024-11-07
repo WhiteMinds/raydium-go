@@ -1,13 +1,7 @@
 package types
 
 import (
-	"encoding/base64"
-	"fmt"
-	"strings"
-
 	"github.com/gagliardetto/solana-go"
-
-	"github.com/near/borsh-go"
 )
 
 const (
@@ -18,6 +12,7 @@ const (
 	RaydiumAmmLogTypeSwapBaseOut = 4
 )
 
+// Amm Types
 // https://github.com/raydium-io/raydium-amm/blob/master/program/src/log.rs
 
 // RaydiumAmmInitLog represents Initialize/Initialize2 logs
@@ -87,69 +82,109 @@ type RaydiumAmmSwapBaseOutLog struct {
 	DirectIn   uint64 `borsh:"directIn"`
 }
 
-func GetRaydiumAmmLogsFromRayLog(rayLog string) (interface{}, error) {
-	// Extract the base64 encoded data from various possible log formats:
-	// 1. "Program log: ray_log: <base64>"
-	// 2. "ray_log: <base64>"
-	// 3. "<base64>"
-	parts := strings.Split(rayLog, ": ")
-	var encodedData string
+// CLMM Types
+// https://github.com/raydium-io/raydium-clmm/blob/master/programs/amm/src/states/pool.rs
+// Common types
+type U128 struct {
+	Lo uint64
+	Hi uint64
+}
 
-	switch len(parts) {
-	case 1:
-		encodedData = parts[0]
-	case 2:
-		encodedData = parts[1]
-	case 3:
-		encodedData = parts[2]
-	default:
-		return nil, fmt.Errorf("invalid rayLog format")
-	}
+type U256 struct {
+	Lo U128
+	Hi U128
+}
 
-	// Clean up any potential whitespace
-	encodedData = strings.TrimSpace(encodedData)
+// Event structs
+type ConfigChangeEvent struct {
+	Owner       solana.PublicKey `borsh:"owner"`
+	FeeRate     uint32           `borsh:"fee_rate"`
+	ProtocolFee uint32           `borsh:"protocol_fee"`
+	FundFee     uint32           `borsh:"fund_fee"`
+}
 
-	// Convert base64 string to bytes
-	data, err := base64.StdEncoding.DecodeString(encodedData)
-	if err != nil {
-		return nil, fmt.Errorf("failed to decode base64 string: %w", err)
-	}
+type CollectPersonalFeeEvent struct {
+	OwnerTokenVault0 solana.PublicKey `borsh:"owner_token_vault_0"`
+	OwnerTokenVault1 solana.PublicKey `borsh:"owner_token_vault_1"`
+	Amount0          uint64           `borsh:"amount_0"`
+	Amount1          uint64           `borsh:"amount_1"`
+}
 
-	// First byte is the discriminator
-	if len(data) == 0 {
-		return nil, fmt.Errorf("empty data")
-	}
-	discriminator := data[0]
+type CollectProtocolFeeEvent struct {
+	ProtocolFeeTokenVault0 solana.PublicKey `borsh:"protocol_fee_token_vault_0"`
+	ProtocolFeeTokenVault1 solana.PublicKey `borsh:"protocol_fee_token_vault_1"`
+	Amount0                uint64           `borsh:"amount_0"`
+	Amount1                uint64           `borsh:"amount_1"`
+}
 
-	var result interface{}
-	switch discriminator {
-	case RaydiumAmmLogTypeInitialize:
-		logs := new(RaydiumAmmInitLog)
-		err = borsh.Deserialize(logs, data)
-		result = logs
-	case RaydiumAmmLogTypeDeposit:
-		logs := new(RaydiumAmmDepositLog)
-		err = borsh.Deserialize(logs, data)
-		result = logs
-	case RaydiumAmmLogTypeWithdraw:
-		logs := new(RaydiumAmmWithdrawLog)
-		err = borsh.Deserialize(logs, data)
-		result = logs
-	case RaydiumAmmLogTypeSwapBaseIn:
-		logs := new(RaydiumAmmSwapBaseInLog)
-		err = borsh.Deserialize(logs, data)
-		result = logs
-	case 4:
-		logs := new(RaydiumAmmSwapBaseOutLog)
-		err = borsh.Deserialize(logs, data)
-		result = logs
-	default:
-		return nil, fmt.Errorf("unknown discriminator: %d", discriminator)
-	}
+type CreatePersonalPositionEvent struct {
+	PoolState        solana.PublicKey `borsh:"pool_state"`
+	Minter           solana.PublicKey `borsh:"minter"`
+	PositionNftMint  solana.PublicKey `borsh:"position_nft_mint"`
+	TickLowerIndex   int32            `borsh:"tick_lower_index"`
+	TickUpperIndex   int32            `borsh:"tick_upper_index"`
+	Liquidity        U128             `borsh:"liquidity"`
+	FeeGrowthInside0 U128             `borsh:"fee_growth_inside_0"`
+	FeeGrowthInside1 U128             `borsh:"fee_growth_inside_1"`
+	TokenFees0       uint64           `borsh:"token_fees_0"`
+	TokenFees1       uint64           `borsh:"token_fees_1"`
+}
 
-	if err != nil {
-		return nil, fmt.Errorf("failed to decode borsh data: %w", err)
-	}
+type DecreaseLiquidityEvent struct {
+	PoolState       solana.PublicKey `borsh:"pool_state"`
+	PositionNftMint solana.PublicKey `borsh:"position_nft_mint"`
+	Liquidity       U128             `borsh:"liquidity"`
+	Amount0         uint64           `borsh:"amount_0"`
+	Amount1         uint64           `borsh:"amount_1"`
+}
 
-	return result, nil
+type IncreaseLiquidityEvent struct {
+	PoolState       solana.PublicKey `borsh:"pool_state"`
+	PositionNftMint solana.PublicKey `borsh:"position_nft_mint"`
+	Liquidity       U128             `borsh:"liquidity"`
+	Amount0         uint64           `borsh:"amount_0"`
+	Amount1         uint64           `borsh:"amount_1"`
+}
+
+type LiquidityCalculateEvent struct {
+	PoolState        solana.PublicKey `borsh:"pool_state"`
+	CurrentTick      int32            `borsh:"current_tick"`
+	CurrentLiquidity U128             `borsh:"current_liquidity"`
+	Amount0          uint64           `borsh:"amount_0"`
+	Amount1          uint64           `borsh:"amount_1"`
+	StartTime        uint64           `borsh:"start_time"`
+	Status           uint8            `borsh:"status"`
+}
+
+type LiquidityChangeEvent struct {
+	PoolState       solana.PublicKey `borsh:"pool_state"`
+	TickIndex       int32            `borsh:"tick_index"`
+	CurrentTick     int32            `borsh:"current_tick"`
+	LiquidityBefore U128             `borsh:"liquidity_before"`
+	LiquidityAfter  U128             `borsh:"liquidity_after"`
+}
+
+type SwapEvent struct {
+	PoolState       solana.PublicKey `borsh:"pool_state"`
+	Sender          solana.PublicKey `borsh:"sender"`
+	TokenAccount0   solana.PublicKey `borsh:"token_account_0"`
+	TokenAccount1   solana.PublicKey `borsh:"token_account_1"`
+	Amount0         uint64           `borsh:"amount_0"`
+	Amount1         uint64           `borsh:"amount_1"`
+	ZeroForOne      bool             `borsh:"zero_for_one"`
+	SqrtPriceX64    U128             `borsh:"sqrt_price_x64"`
+	LiquidityBefore U128             `borsh:"liquidity_before"`
+	LiquidityAfter  U128             `borsh:"liquidity_after"`
+	Tick            int32            `borsh:"tick"`
+}
+
+type PoolCreatedEvent struct {
+	TokenMint0   solana.PublicKey `borsh:"token_mint_0"`
+	TokenMint1   solana.PublicKey `borsh:"token_mint_1"`
+	TickSpacing  uint16           `borsh:"tick_spacing"`
+	PoolState    solana.PublicKey `borsh:"pool_state"`
+	SqrtPriceX64 U128             `borsh:"sqrt_price_x64"`
+	Tick         int32            `borsh:"tick"`
+	TokenVault0  solana.PublicKey `borsh:"token_vault_0"`
+	TokenVault1  solana.PublicKey `borsh:"token_vault_1"`
 }
