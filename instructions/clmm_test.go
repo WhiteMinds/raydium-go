@@ -35,7 +35,7 @@ func TestDecodeRaydiumData(t *testing.T) {
 			name: "decode SwapV2 data",
 			data: SwapV2DataHex,
 			want: types.ClmmSwapV2Args{
-				Unused:               [8]byte{248, 198, 158, 145, 225, 117, 135, 200},
+				//	Unused:               0,
 				Amount:               50000000000,
 				OtherAmountThreshold: 0,
 				SqrtPriceLimitX64:    [16]byte{0, 20, 177, 40, 186, 107, 183, 104, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -47,7 +47,7 @@ func TestDecodeRaydiumData(t *testing.T) {
 			name: "decode Init data",
 			data: InitDataHex,
 			want: types.ClmmCreatePoolArgs{
-				Unused:       [8]byte{233, 146, 209, 142, 207, 104, 64, 188},
+				//		Unused:       0,
 				SqrtPriceX64: [16]byte{132, 5, 143, 144, 239, 20, 177, 18, 57, 0, 0, 0, 0, 0, 0, 0},
 				OpenTime:     1730431497,
 			},

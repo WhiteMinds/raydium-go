@@ -6,6 +6,20 @@ import "crypto/sha256"
 // which automatically generates an 8-byte discriminator for each event.
 // The discriminator is calculated using a hash of the event's name.
 
+func GetInstructionDiscriminator(name string) [8]byte {
+	// Create the namespace string "instruction:{name}"
+	namespace := "global:" + name
+
+	// Calculate SHA256
+	hash := sha256.Sum256([]byte(namespace))
+
+	// Take first 8 bytes
+	var result [8]byte
+	copy(result[:], hash[:8])
+
+	return result
+}
+
 func GetDiscriminator(name string) [8]byte {
 	// Create the namespace string "event:{name}"
 	namespace := "event:" + name

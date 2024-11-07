@@ -69,3 +69,9 @@ func TestCheckDiscriminator(t *testing.T) {
 		})
 	}
 }
+
+func TestGenerateDiscriminator(t *testing.T) {
+	// [233 146 209 142 207 104 64 188]
+	discriminator := GetInstructionDiscriminator("CreatePool")
+	t.Logf("%+v", discriminator)
+}

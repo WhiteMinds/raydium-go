@@ -1,15 +1,30 @@
 package types
 
-type uint128 [16]byte
+import "math/big"
+
+func GetBigIntFromUint128(bytes [16]byte) *big.Int {
+	return GetBigIntFromLittleEndianBytes(bytes[:])
+}
+
+func GetBigIntFromLittleEndianBytes(bytes []byte) *big.Int {
+	reversed := make([]byte, len(bytes))
+	for i := 0; i < len(bytes); i++ {
+		reversed[len(bytes)-1-i] = bytes[i]
+	}
+
+	return new(big.Int).SetBytes(reversed)
+}
+
+// TODO: find the discriminator for this instruction
 
 type ClmmCreatePoolArgs struct {
-	Unused       [8]byte
-	SqrtPriceX64 [16]byte
-	OpenTime     uint64
+	Discriminator [8]byte
+	SqrtPriceX64  [16]byte
+	OpenTime      uint64
 }
 
 type ClmmSwapV2Args struct {
-	Unused               [8]byte
+	Discriminator        [8]byte
 	Amount               uint64
 	OtherAmountThreshold uint64
 	SqrtPriceLimitX64    [16]byte
