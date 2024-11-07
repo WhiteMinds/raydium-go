@@ -84,106 +84,98 @@ type RaydiumAmmSwapBaseOutLog struct {
 
 // CLMM Types
 // https://github.com/raydium-io/raydium-clmm/blob/master/programs/amm/src/states/pool.rs
-// Common types
-type U128 struct {
-	Lo uint64
-	Hi uint64
-}
-
-type U256 struct {
-	Lo U128
-	Hi U128
-}
-
 // Event structs
-type ConfigChangeEvent struct {
+type ClmmConfigChangeEvent struct {
 	Owner       solana.PublicKey `borsh:"owner"`
 	FeeRate     uint32           `borsh:"fee_rate"`
 	ProtocolFee uint32           `borsh:"protocol_fee"`
 	FundFee     uint32           `borsh:"fund_fee"`
 }
 
-type CollectPersonalFeeEvent struct {
+type ClmmCollectPersonalFeeEvent struct {
 	OwnerTokenVault0 solana.PublicKey `borsh:"owner_token_vault_0"`
 	OwnerTokenVault1 solana.PublicKey `borsh:"owner_token_vault_1"`
 	Amount0          uint64           `borsh:"amount_0"`
 	Amount1          uint64           `borsh:"amount_1"`
 }
 
-type CollectProtocolFeeEvent struct {
+type ClmmCollectProtocolFeeEvent struct {
 	ProtocolFeeTokenVault0 solana.PublicKey `borsh:"protocol_fee_token_vault_0"`
 	ProtocolFeeTokenVault1 solana.PublicKey `borsh:"protocol_fee_token_vault_1"`
 	Amount0                uint64           `borsh:"amount_0"`
 	Amount1                uint64           `borsh:"amount_1"`
 }
 
-type CreatePersonalPositionEvent struct {
+type ClmmCreatePersonalPositionEvent struct {
 	PoolState        solana.PublicKey `borsh:"pool_state"`
 	Minter           solana.PublicKey `borsh:"minter"`
 	PositionNftMint  solana.PublicKey `borsh:"position_nft_mint"`
 	TickLowerIndex   int32            `borsh:"tick_lower_index"`
 	TickUpperIndex   int32            `borsh:"tick_upper_index"`
-	Liquidity        U128             `borsh:"liquidity"`
-	FeeGrowthInside0 U128             `borsh:"fee_growth_inside_0"`
-	FeeGrowthInside1 U128             `borsh:"fee_growth_inside_1"`
+	Liquidity        uint64           `borsh:"liquidity"`
+	FeeGrowthInside0 uint64           `borsh:"fee_growth_inside_0"`
+	FeeGrowthInside1 uint64           `borsh:"fee_growth_inside_1"`
 	TokenFees0       uint64           `borsh:"token_fees_0"`
 	TokenFees1       uint64           `borsh:"token_fees_1"`
 }
 
-type DecreaseLiquidityEvent struct {
+type ClmmDecreaseLiquidityEvent struct {
 	PoolState       solana.PublicKey `borsh:"pool_state"`
 	PositionNftMint solana.PublicKey `borsh:"position_nft_mint"`
-	Liquidity       U128             `borsh:"liquidity"`
+	Liquidity       uint64           `borsh:"liquidity"`
 	Amount0         uint64           `borsh:"amount_0"`
 	Amount1         uint64           `borsh:"amount_1"`
 }
 
-type IncreaseLiquidityEvent struct {
+type ClmmIncreaseLiquidityEvent struct {
 	PoolState       solana.PublicKey `borsh:"pool_state"`
 	PositionNftMint solana.PublicKey `borsh:"position_nft_mint"`
-	Liquidity       U128             `borsh:"liquidity"`
+	Liquidity       uint64           `borsh:"liquidity"`
 	Amount0         uint64           `borsh:"amount_0"`
 	Amount1         uint64           `borsh:"amount_1"`
 }
 
-type LiquidityCalculateEvent struct {
+type ClmmLiquidityCalculateEvent struct {
 	PoolState        solana.PublicKey `borsh:"pool_state"`
 	CurrentTick      int32            `borsh:"current_tick"`
-	CurrentLiquidity U128             `borsh:"current_liquidity"`
+	CurrentLiquidity uint64           `borsh:"current_liquidity"`
 	Amount0          uint64           `borsh:"amount_0"`
 	Amount1          uint64           `borsh:"amount_1"`
 	StartTime        uint64           `borsh:"start_time"`
 	Status           uint8            `borsh:"status"`
 }
 
-type LiquidityChangeEvent struct {
+type ClmmLiquidityChangeEvent struct {
 	PoolState       solana.PublicKey `borsh:"pool_state"`
 	TickIndex       int32            `borsh:"tick_index"`
 	CurrentTick     int32            `borsh:"current_tick"`
-	LiquidityBefore U128             `borsh:"liquidity_before"`
-	LiquidityAfter  U128             `borsh:"liquidity_after"`
+	LiquidityBefore uint64           `borsh:"liquidity_before"`
+	LiquidityAfter  uint64           `borsh:"liquidity_after"`
 }
 
-type SwapEvent struct {
+// src/states/pool.rs
+type ClmmSwapEvent struct {
 	PoolState       solana.PublicKey `borsh:"pool_state"`
 	Sender          solana.PublicKey `borsh:"sender"`
 	TokenAccount0   solana.PublicKey `borsh:"token_account_0"`
 	TokenAccount1   solana.PublicKey `borsh:"token_account_1"`
 	Amount0         uint64           `borsh:"amount_0"`
+	TransferFee0    uint64           `borsh:"transfer_fee_0"`
 	Amount1         uint64           `borsh:"amount_1"`
+	TransferFee1    uint64           `borsh:"transfer_fee_1"`
 	ZeroForOne      bool             `borsh:"zero_for_one"`
-	SqrtPriceX64    U128             `borsh:"sqrt_price_x64"`
-	LiquidityBefore U128             `borsh:"liquidity_before"`
-	LiquidityAfter  U128             `borsh:"liquidity_after"`
+	SqrtPriceX64    uint64           `borsh:"sqrt_price_x64"`
+	LiquidityBefore uint64           `borsh:"liquidity_before"`
+	LiquidityAfter  uint64           `borsh:"liquidity_after"`
 	Tick            int32            `borsh:"tick"`
 }
 
-type PoolCreatedEvent struct {
+type ClmmPoolCreatedEvent struct {
 	TokenMint0   solana.PublicKey `borsh:"token_mint_0"`
 	TokenMint1   solana.PublicKey `borsh:"token_mint_1"`
 	TickSpacing  uint16           `borsh:"tick_spacing"`
 	PoolState    solana.PublicKey `borsh:"pool_state"`
-	SqrtPriceX64 U128             `borsh:"sqrt_price_x64"`
+	SqrtPriceX64 uint64           `borsh:"sqrt_price_x64"`
 	Tick         int32            `borsh:"tick"`
 	TokenVault0  solana.PublicKey `borsh:"token_vault_0"`
 	TokenVault1  solana.PublicKey `borsh:"token_vault_1"`
