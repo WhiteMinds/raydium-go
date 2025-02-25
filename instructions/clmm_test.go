@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/Umiiii/raydium-go/types"
+	"github.com/WhiteMinds/raydium-go/types"
 )
 
 const (

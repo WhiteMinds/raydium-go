@@ -1,4 +1,4 @@
-module github.com/Umiiii/raydium-go
+module github.com/WhiteMinds/raydium-go
 
 go 1.21.3
 
