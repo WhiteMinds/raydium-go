@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/WhiteMinds/raydium-go/types"
+	bin "github.com/gagliardetto/binary"
 	"github.com/near/borsh-go"
 )
 
@@ -75,7 +76,8 @@ func GetRaydiumCLMMLogsFromBase64Log(logData string) (interface{}, error) {
 		result = event
 	case types.ClmmSwapEventDiscriminator:
 		event := new(types.ClmmSwapEvent)
-		err = borsh.Deserialize(event, remainingData)
+		dec := bin.NewBinDecoder(remainingData)
+		err = dec.Decode(event)
 		result = event
 	case types.ClmmPoolCreatedEventDiscriminator:
 		event := new(types.ClmmPoolCreatedEvent)

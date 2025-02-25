@@ -1,6 +1,7 @@
 package types
 
 import (
+	bin "github.com/gagliardetto/binary"
 	"github.com/gagliardetto/solana-go"
 )
 
@@ -155,19 +156,18 @@ type ClmmLiquidityChangeEvent struct {
 
 // src/states/pool.rs
 type ClmmSwapEvent struct {
-	PoolState       solana.PublicKey `borsh:"pool_state"`
-	Sender          solana.PublicKey `borsh:"sender"`
-	TokenAccount0   solana.PublicKey `borsh:"token_account_0"`
-	TokenAccount1   solana.PublicKey `borsh:"token_account_1"`
-	Amount0         uint64           `borsh:"amount_0"`
-	TransferFee0    uint64           `borsh:"transfer_fee_0"`
-	Amount1         uint64           `borsh:"amount_1"`
-	TransferFee1    uint64           `borsh:"transfer_fee_1"`
-	ZeroForOne      bool             `borsh:"zero_for_one"`
-	SqrtPriceX64    uint64           `borsh:"sqrt_price_x64"`
-	LiquidityBefore uint64           `borsh:"liquidity_before"`
-	LiquidityAfter  uint64           `borsh:"liquidity_after"`
-	Tick            int32            `borsh:"tick"`
+	PoolState      solana.PublicKey `borsh:"pool_state"`
+	Sender         solana.PublicKey `borsh:"sender"`
+	TokenAccount0  solana.PublicKey `borsh:"token_account_0"`
+	TokenAccount1  solana.PublicKey `borsh:"token_account_1"`
+	Amount0        uint64           `borsh:"amount_0"`
+	TransferFee0   uint64           `borsh:"transfer_fee_0"`
+	Amount1        uint64           `borsh:"amount_1"`
+	TransferFee1   uint64           `borsh:"transfer_fee_1"`
+	ZeroForOne     bool             `borsh:"zero_for_one"`
+	SqrtPriceX64   bin.Uint128      `borsh:"sqrt_price_x64"`
+	LiquidityAfter bin.Uint128      `borsh:"liquidity_after"`
+	Tick           int32            `borsh:"tick"`
 }
 
 type ClmmPoolCreatedEvent struct {
